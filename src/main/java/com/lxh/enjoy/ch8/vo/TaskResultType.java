@@ -2,6 +2,7 @@ package com.lxh.enjoy.ch8.vo;
 
 /**
  * 返回结果类型
+ *
  * @author lixiaohao
  * @since 2020/4/29 16:48
  */

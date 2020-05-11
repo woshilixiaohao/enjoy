@@ -2,7 +2,6 @@ package com.lxh.enjoy.dp;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 
 /**
  * @author lixiaohao

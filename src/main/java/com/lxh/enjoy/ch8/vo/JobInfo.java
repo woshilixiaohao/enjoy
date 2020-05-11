@@ -1,5 +1,7 @@
 package com.lxh.enjoy.ch8.vo;
 
+import com.lxh.enjoy.ch8.CheckJobProcessor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -25,14 +27,13 @@ public class JobInfo<R> {
     // 过期时间
     private final long expireTime;
 
-    public JobInfo(String jobName, int jobLength, ITaskProcessor<?, ?> taskProcessor,
-                   LinkedBlockingDeque<TaskResult<R>> taskDetailQueue, long expireTime) {
+    public JobInfo(String jobName, int jobLength, ITaskProcessor<?, ?> taskProcessor, long expireTime) {
         this.jobName = jobName;
         this.jobLength = jobLength;
         this.taskProcessor = taskProcessor;
         this.successCount = new AtomicInteger(0);
         this.taskProcessorCount = new AtomicInteger(0);
-        this.taskDetailQueue = taskDetailQueue;
+        this.taskDetailQueue = new LinkedBlockingDeque<>(jobLength);
         this.expireTime = expireTime;
     }
 
@@ -48,15 +49,15 @@ public class JobInfo<R> {
         return taskProcessorCount.get();
     }
 
-    public int getFailCount(){
+    public int getFailCount() {
         return taskProcessorCount.get() - successCount.get();
     }
 
-    public String getTotalProcess(){
+    public String getTotalProcess() {
         return "success: " + successCount.get() + ", current: " + taskProcessorCount.get() + ", total: " + jobLength;
     }
 
-    public List<TaskResult<R>> getTaskDetail(){
+    public List<TaskResult<R>> getTaskDetail() {
         List<TaskResult<R>> list = new ArrayList<>();
         TaskResult<R> taskResult;
         while ((taskResult = taskDetailQueue.pollFirst()) != null) {
@@ -66,13 +67,14 @@ public class JobInfo<R> {
     }
 
     // 从业务应用角度来说，保证最终一致性几颗，不需要对方法加锁
-    public void addTaskResult(TaskResult<R> taskResult){
-        taskDetailQueue.addLast(taskResult);
-        taskProcessorCount.incrementAndGet();
+    public void addTaskResult(TaskResult<R> taskResult, CheckJobProcessor checkJobProcessor) {
         if (TaskResultType.Success.equals(taskResult.getResultType())) {
             successCount.incrementAndGet();
-        } else if (TaskResultType.Failure.equals(taskResult.getResultType())) {
-
+        }
+        taskDetailQueue.addLast(taskResult);
+        taskProcessorCount.incrementAndGet();
+        if (taskProcessorCount.get() == jobLength) {
+            checkJobProcessor.putJob(jobName, expireTime);
         }
     }
 }

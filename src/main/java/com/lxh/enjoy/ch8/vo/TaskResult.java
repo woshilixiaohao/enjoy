@@ -4,6 +4,7 @@ import lombok.Getter;
 
 /**
  * 返回结果
+ *
  * @author lixiaohao
  * @since 2020/4/29 16:51
  */
@@ -25,5 +26,12 @@ public class TaskResult<R> {
         this.reason = "success";
     }
 
-
+    @Override
+    public String toString() {
+        return "TaskResult{" +
+                "resultType=" + resultType +
+                ", returnValue=" + returnValue +
+                ", reason='" + reason + '\'' +
+                '}';
+    }
 }
