@@ -1,6 +1,9 @@
 package com.lxh.enjoy.dp;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -10,25 +13,7 @@ import java.time.format.DateTimeFormatter;
 public class TestOne {
 
     public static void main(String[] args) {
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE));
-
-//        Scanner scanner = new Scanner(System.in);
-//        int n = scanner.nextInt();
-//        int max = 0;
-//        int[][] dp = new int[n + 1][n + 1];
-//        for (int i = 1; i < n + 1; i++) {
-//            for (int j = 1; j <= i; j++) {
-//                int input = scanner.nextInt();
-//                if (i == 1) {
-//                    dp[i][j] = input;
-//                } else {
-//                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - 1]) + input;
-//                }
-//                max = Math.max(dp[i][j],max);
-//            }
-//        }
-//        System.out.println(max);
-
+        System.out.println(new BigDecimal(5).divide(new BigDecimal(2), 2, BigDecimal.ROUND_HALF_UP));
     }
 
 }
